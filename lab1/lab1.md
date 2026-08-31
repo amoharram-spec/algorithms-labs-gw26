@@ -12,11 +12,11 @@ The Fibonacci sequence is a sequence of numbers where:
 
 ```
 TODO: Answer the following questions:
-fibonacci(5) = 
-fibonacci(6) = 
-fibonacci(7) = 
-fibonacci(8) = 
-fibonacci(9) = 
+fibonacci(5) = 5
+fibonacci(6) = 8
+fibonacci(7) = 13
+fibonacci(8) = 21
+fibonacci(9) = 34
 ```
 
 ## Basic implementation
@@ -39,15 +39,15 @@ The code version also tells you how much time does it take to complete each calc
 ```
 TODO:
 1. Explain what the code above is doing.
-A: 
+A: The code finds a given Fibonacci number by repeatedly calling itself to add the two preceding numbers together until it reaches the starting base cases of 0 and 1.
 2. What happens if we remove the "if ... return ..." and only keep the last line?
-A: 
+A: it would be removing the base cases so the code would continue running even if the numbers were negative
 3. What is fibonacci(20)? how much time did it take to calculate that?
-A: 
+A: 6765, calculating this took 2.0207e-03 seconds
 4. What is fibonacci(30)? how much time did it take to calculate that?
-A: 
+A: 832040, calculating this took 1.9957e-01 seconds.
 5. How much time did it take you to calculate fibonacci(40)? (this might take a while...)
-A: 
+A: 102334155, calculating this took 2.3468e+01 seconds.
 ```
 
 ## How many function calls?
@@ -55,12 +55,12 @@ A:
 Modify ``fibonacci_counting.py`` so that it does the same calculation as ``fibonacci.py``, but it also counts how many times the function ``fibonacci(n)`` had to be called. Then answer the following:
 ```
 TODO:
-1. How many function calls does fibonacci(1) take?
-2. How many function calls does fibonacci(5) take?
-3. How many function calls does fibonacci(10) take?
-4. Why is it so slow? Where does the complexity come from?
-5. Is this O(n)? is this O(2^n)? Why?
-6. Is this Ω(n)? Why?
+1. How many function calls does fibonacci(1) take? **1**
+2. How many function calls does fibonacci(5) take? **15**
+3. How many function calls does fibonacci(10) take? **177**
+4. Why is it so slow? Where does the complexity come from? 
+5. Is this O(n)? is this O(2^n)? Why? **this is O(2^n) and not O(n) because every n calls itself twice forming a binary treelike diagram which is O(2^n) efficiency**
+6. Is this Ω(n)? Why? **this is bigOmega(n) because for n=1 it made 1 call but for any greater value the efficiency is way worse so the lower bound is linear making fibonacci bigOmega(n)**
 ```
 
 ## Memoization Optimization
@@ -68,12 +68,12 @@ TODO:
 Take a look at ``fibonacci_counting.py``, where memoization is used.
 ```
 TODO:
-1. How is this one different from the previous one?
-2. How much time does it take to calculate fibonacci(30)?
-3. Why is it often faster?
-4. Also modify this file to count: how many times the function had to be called for fibonacci(30)?
-5. Is this O(n)? is this O(2^n)? Why?
-6. Is this Ω(n)? is this Ω(2^n)? Why?
+1. How is this one different from the previous one? **this one creates and checks cache dictionary before every calculation to see if the fibonacci for this n was already calculated to avoid repition**
+2. How much time does it take to calculate fibonacci(30)? **4.8000e-05 seconds.**
+3. Why is it often faster? **Because it checks the cache dictionary to see if we already did the fibonacci calculation such that it would not need to repeat that calculation which saves time and calls the function less making it faster**
+4. Also modify this file to count: how many times the function had to be called for fibonacci(30)? **59**
+5. Is this O(n)? is this O(2^n)? Why? **This modification makes it O(n) because now every n is only called once, although it is slightly less efficient than O(n) it is actually O(2n-1) but since we ignore low order constants and coefficients we can simplify it to O(n)**
+6. Is this Ω(n)? is this Ω(2^n)? Why? **bigOmega(n) because bigOmega(2^n) would mean the best case efficiency would mean every call has two calls which is false, in this scenario every call usually has just one call**
 ```
 
 ## Extension: Staircase Problem

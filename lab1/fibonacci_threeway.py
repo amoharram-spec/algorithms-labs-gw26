@@ -5,10 +5,22 @@
 # fibonacci_threeway(3) = 1
 # fibonacci_threeway(4) = 1 + 1 + 1 = 3
 # and so on...
-
+cache = {}
+call_count = 0
 def fibonacci_threeway(n):
-    raise NotImplementedError("TODO: replace this line in fibonacci_threeway.py with your solution!")
-
+    global call_count
+    call_count = call_count +1
+    if n <= 0:
+        return 0
+    if n == 1:
+        return 1
+    if n == 2:
+        return 1
+    if n == 3:
+        return 1
+    if n not in cache:
+        cache[n] = fibonacci_threeway(n-1) + fibonacci_threeway(n-2) + fibonacci_threeway(n-3)
+    return cache[n]
 def is_positive_integer(text):
     try:
         return int(text) > 0
