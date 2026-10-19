@@ -19,7 +19,7 @@ any code. You will focus on the three most important building blocks from class:
 2. **Part 2: Separate Chaining**: Resolving collisions by storing a list (bucket chain) at each array slot, and tracking the **load factor** $\alpha = N / M$.
 3. **Part 3: Open Addressing with Linear Probing**: Resolving collisions directly inside a single array by stepping forward one slot at a time.
 
-## Files and deliverables
+## Files and deliverables 
 
 | File | Your work |
 |---|---|
@@ -114,9 +114,9 @@ worked for you.
 | Key $k$ | Binary (8-bit) | Last 3 Bits | Division $k \bmod 8$ ($m = 8$) | Prime Division $k \bmod 7$ ($m = 7$) | Multiplication $\lfloor 8 \cdot ((k \cdot A) \bmod 1) \rfloor$ ($m = 8$) |
 |---|---|---|---|---|---|
 | 19 | `00010 011` | `011` | `19 % 8 = 3` | `19 % 7 = 5` | `floor(8 * 0.7426) = 5` |
-| 51 | `00110 011` | `011` | TODO | TODO | `floor(8 * 0.5197) = 4` |
-| 83 | `01010 011` | `011` | TODO | TODO | `floor(8 * 0.2968) = 2` |
-| 115 | `01110 011` | `011` | TODO | TODO | `floor(8 * 0.0739) = 0` |
+| 51 | `00110 011` | `011` | 51%8=3 | 51%7=2 | `floor(8 * 0.5197) = 4` |
+| 83 | `01010 011` | `011` | 83%8 = 3 | 83%7 =6 | `floor(8 * 0.2968) = 2` |
+| 115 | `01110 011` | `011` | 115%8=3 | 115%7=3 | `floor(8 * 0.0739) = 0` |
 
 ### 1.2 Implementation
 
@@ -136,6 +136,8 @@ python3 hash_functions_practice.py
 **TODO 1.3:** Look at your `k mod 8` column vs. your `k mod 7` column in
 Table 1.1. Why did all four keys collide into slot `3` when $m = 8$, and why did
 choosing a prime table size ($m = 7$) spread them into different slots?
+
+The division method only looks at the last 3 bits when doing mod 8 because 8=2^p, p =3. since all the last 3 is 011 they all collide in the same bucket. When using a prime numer like 7 the bucket depends on all the bits of the input number so the buckets differ. 
 
 ---
 
@@ -229,9 +231,9 @@ are worked for you.
 |---|---|---|---|---|---|
 | 1 | `(12, "A")` | `12 % 7 = 5` | `[[12, "A"]]` | 1 | `1/7 ≈ 0.14` |
 | 2 | `(19, "B")` | `19 % 7 = 5` | `[[12, "A"], [19, "B"]]` | 2 | `2/7 ≈ 0.29` |
-| 3 | `(24, "C")` | TODO | TODO | TODO | TODO |
-| 4 | `(26, "D")` | TODO | TODO | TODO | TODO |
-| 5 | `(31, "E")` | TODO | TODO | TODO | TODO |
+| 3 | `(24, "C")` | 24%7 | 24,c | 3 | .43 |
+| 4 | `(26, "D")` | 26%7 | [[12, "A"], [19, "B"], [26,D]] | 4 | .57 |
+| 5 | `(31, "E")` | 31%7 | 24,C - 31,E | 5 | .71 |
 
 ### 2.2 Implementation
 
@@ -254,6 +256,8 @@ $2M = 8$, why do we have to recompute `key % new_capacity` for every key
 (for example, key `14` moves from bucket `14 % 4 = 2` to bucket `14 % 8 = 6`)
 instead of just copying bucket `2` from the old table into bucket `2` of the new
 table?
+
+we have more or less buckets our hash function will be different meaning you can put the same number into the new table with new hash function and it might end up at a different bucket.
 
 ---
 
@@ -352,11 +356,11 @@ $h(k) = k \bmod 7$). The first two insertions and first lookup are worked.
 |---|---|---|---|---|---|
 | Insert `12` | `12 % 7 = 5` | `5` | 1 | Placed at slot `5` | `[_, _, _, _, _, 12, _]` |
 | Insert `19` | `19 % 7 = 5` | `5 -> 6` | 2 | Placed at slot `6` | `[_, _, _, _, _, 12, 19]` |
-| Insert `26` | `26 % 7 = 5` | TODO | TODO | Placed at slot `0` | `[26, _, _, _, _, 12, 19]` |
-| Insert `3` | `3 % 7 = 3` | TODO | TODO | Placed at slot `3` | `[26, _, _, 3, _, 12, 19]` |
-| Insert `10` | `10 % 7 = 3` | TODO | TODO | Placed at slot `4` | `[26, _, _, 3, 10, 12, 19]` |
+| Insert `26` | `26 % 7 = 5` | 5-6-0 | 3 | Placed at slot `0` | `[26, _, _, _, _, 12, 19]` |
+| Insert `3` | `3 % 7 = 3` | 3 | 1 | Placed at slot `3` | `[26, _, _, 3, _, 12, 19]` |
+| Insert `10` | `10 % 7 = 3` | 3-4 | 2 | Placed at slot `4` | `[26, _, _, 3, 10, 12, 19]` |
 | Lookup `26` | `26 % 7 = 5` | `5 -> 6 -> 0` | 3 | Found `26` at slot `0` | *(unchanged)* |
-| Lookup `33` | `33 % 7 = 5` | TODO | TODO | Not found (hit empty slot `1`) | *(unchanged)* |
+| Lookup `33` | `33 % 7 = 5` | 5-6-0-1 | 4 | Not found (hit empty slot `1`) | *(unchanged)* |
 
 ### 3.2 Implementation
 
@@ -378,6 +382,8 @@ Table 3.1, why can `linear_probe_lookup` stop as soon as it hits empty slot `1`
 without checking slots `2`, `3`, or `4`? Also, why does Open Addressing slow
 down much more drastically than Separate Chaining when the load factor $\alpha$
 approaches `1.0`?
+
+linear probing stops at the first empty bucket because the missing key would either be at the proper hash or increment through the array ascending. If we hit an empty bucket that means that 33 is not in the array because it wouldve been at that bucket. as load factor approaches 1 linear probing creates blocks and we have to traverse through the array index then within the list inside each index which is exponential. seperate chaining just has to search the bucket the element was supposed to be hashed to even at a high load factor it at worst has to check all the elements in the array.
 
 ---
 
