@@ -106,10 +106,9 @@ bit-pattern trap of the Division Method, we use the Multiplication Method:
 In lecture, we saw four keys `[19, 51, 83, 115]` whose binary representations
 all end in the exact same 3 bits (`011`).
 
-**TODO 1.1:** Complete the table below comparing what happens when we hash these
-four keys using the Division Method with $m = 8$ ($2^3$), the Division Method
-with prime $m = 7$, and the Multiplication Method with $m = 8$. The first row is
-worked for you.
+The table below compares what happens when we hash these four keys using the
+Division Method with $m = 8$ ($2^3$), the Division Method with prime $m = 7$,
+and the Multiplication Method with $m = 8$. The first row is worked for you.
 
 | Key $k$ | Binary (8-bit) | Last 3 Bits | Division $k \bmod 8$ ($m = 8$) | Prime Division $k \bmod 7$ ($m = 7$) | Multiplication $\lfloor 8 \cdot ((k \cdot A) \bmod 1) \rfloor$ ($m = 8$) |
 |---|---|---|---|---|---|
@@ -122,8 +121,8 @@ worked for you.
 
 Open `hash_functions_practice.py` and implement the two functions (each is just
 1–2 lines of code):
-- **TODO 1.2A:** `division_hash(key, m)`
-- **TODO 1.2B:** `multiplication_hash(key, m, A)`
+- `division_hash(key, m)`
+- `multiplication_hash(key, m, A)`
 
 Test your implementation by running:
 
@@ -133,9 +132,9 @@ python3 hash_functions_practice.py
 
 ### 1.3 Short answer
 
-**TODO 1.3:** Look at your `k mod 8` column vs. your `k mod 7` column in
-Table 1.1. Why did all four keys collide into slot `3` when $m = 8$, and why did
-choosing a prime table size ($m = 7$) spread them into different slots?
+Look at your `k mod 8` column vs. your `k mod 7` column in Table 1.1. Why did
+all four keys collide into slot `3` when $m = 8$, and why did choosing a prime
+table size ($m = 7$) spread them into different slots?
 
 The division method only looks at the last 3 bits when doing mod 8 because 8=2^p, p =3. since all the last 3 is 011 they all collide in the same bucket. When using a prime numer like 7 the bucket depends on all the bits of the input number so the buckets differ. 
 
@@ -224,8 +223,8 @@ Trace inserting `(12, "A")`, `(19, "B")`, `(24, "C")`, `(26, "D")`, and
 `(31, "E")` into an empty Separate Chaining table with $M = 7$ buckets (`0` to `6`)
 and $h(k) = k \bmod 7$.
 
-**TODO 2.1:** Fill in the remaining three rows of the table. The first two rows
-are worked for you.
+The remaining three rows are filled in below. The first two rows are worked for
+you.
 
 | Step | Insert `(key, val)` | Bucket Index ($k \bmod 7$) | Contents of `table.buckets[index]` after insert | Total items $N$ | Load Factor $\alpha = N / 7$ |
 |---|---|---|---|---|---|
@@ -239,8 +238,8 @@ are worked for you.
 
 Open `chaining_practice.py`. Notice that `load_factor`, `chaining_rehash`, and
 `chaining_delete` are already provided for you! Implement the two core functions:
-- **TODO 2.2A:** `chaining_insert(table, key, value)`
-- **TODO 2.2B:** `chaining_lookup(table, key)`
+- `chaining_insert(table, key, value)`
+- `chaining_lookup(table, key)`
 
 Test your implementation by running:
 
@@ -250,12 +249,11 @@ python3 chaining_practice.py
 
 ### 2.3 Short answer
 
-**TODO 2.3:** Look at the provided `chaining_rehash` function in
-`chaining_practice.py`. When the table doubles in capacity from $M = 4$ to
-$2M = 8$, why do we have to recompute `key % new_capacity` for every key
-(for example, key `14` moves from bucket `14 % 4 = 2` to bucket `14 % 8 = 6`)
-instead of just copying bucket `2` from the old table into bucket `2` of the new
-table?
+Look at the provided `chaining_rehash` function in `chaining_practice.py`. When
+the table doubles in capacity from $M = 4$ to $2M = 8$, why do we have to
+recompute `key % new_capacity` for every key (for example, key `14` moves from
+bucket `14 % 4 = 2` to bucket `14 % 8 = 6`) instead of just copying bucket `2`
+from the old table into bucket `2` of the new table?
 
 we have more or less buckets our hash function will be different meaning you can put the same number into the new table with new hash function and it might end up at a different bucket.
 
@@ -349,7 +347,7 @@ Starting with the 7-slot table from the lecture walkthrough where `12` and `19`
 have already been inserted, complete the trace for inserting `26`, `3`, and `10`,
 and then trace two lookups on the final table.
 
-**TODO 3.1:** Complete the remaining rows of the table below (`M = 7`,
+The remaining rows of the table below are filled in (`M = 7`,
 $h(k) = k \bmod 7$). The first two insertions and first lookup are worked.
 
 | Operation | Initial Hash ($k \bmod 7$) | Slots Inspected in Order | Number of Probes | Result / Slot Placed | Table State `[s0, s1, s2, s3, s4, s5, s6]` |
@@ -366,8 +364,8 @@ $h(k) = k \bmod 7$). The first two insertions and first lookup are worked.
 
 Open `probing_practice.py`. The `probe_index(key, i, m)` helper is already
 provided for you. Implement the two core functions:
-- **TODO 3.2A:** `linear_probe_insert(table, key, value)`
-- **TODO 3.2B:** `linear_probe_lookup(table, key)`
+- `linear_probe_insert(table, key, value)`
+- `linear_probe_lookup(table, key)`
 
 Test your implementation by running:
 
@@ -377,11 +375,10 @@ python3 probing_practice.py
 
 ### 3.3 Short answer
 
-**TODO 3.3:** When searching for missing key `33` ($33 \bmod 7 = 5$) in
-Table 3.1, why can `linear_probe_lookup` stop as soon as it hits empty slot `1`
-without checking slots `2`, `3`, or `4`? Also, why does Open Addressing slow
-down much more drastically than Separate Chaining when the load factor $\alpha$
-approaches `1.0`?
+When searching for missing key `33` ($33 \bmod 7 = 5$) in Table 3.1, why can
+`linear_probe_lookup` stop as soon as it hits empty slot `1` without checking
+slots `2`, `3`, or `4`? Also, why does Open Addressing slow down much more
+drastically than Separate Chaining when the load factor $\alpha$ approaches `1.0`?
 
 linear probing stops at the first empty bucket because the missing key would either be at the proper hash or increment through the array ascending. If we hit an empty bucket that means that 33 is not in the array because it wouldve been at that bucket. as load factor approaches 1 linear probing creates blocks and we have to traverse through the array index then within the list inside each index which is exponential. seperate chaining just has to search the bucket the element was supposed to be hashed to even at a high load factor it at worst has to check all the elements in the array.
 
@@ -397,7 +394,7 @@ python3 chaining_practice.py
 python3 probing_practice.py
 ```
 
-- Any unfinished function reports `[TODO]`.
+- Incomplete functions remain unfinished until fixed.
 - Any logic error or failed assertion reports `[FAIL]`.
 - Any fully working function reports `[PASS]`.
 

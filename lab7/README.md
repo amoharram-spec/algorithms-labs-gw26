@@ -25,7 +25,7 @@ pseudocode, and practice traces. The current sections cover:
 | File | Your work |
 |---|---|
 | `README.md` | Complete the traces and complexity questions |
-| `string_search.py` | Fill in the four implementation TODOs |
+| `string_search.py` | Complete the four implementations |
 | `lab_checks.py` | Provided automated checks; do not edit |
 
 - [ ] Part 1: Trace and implement naive search.
@@ -77,21 +77,21 @@ NAIVE-SEARCH(T, P)
 
 ### 1.1 Trace: Where does each attempt stop?
 
-**TODO 1.1:** For the same text and pattern, trace the shifts below.
-List the text indices checked, in order, including the one where a mismatch
-occurs. Record where $j$ stops and whether you add $s$ to the results.
+For the same text and pattern, trace the shifts below. List the text indices
+checked, in order, including the one where a mismatch occurs. Record where $j$
+stops and whether you add $s$ to the results.
 
 | Shift `s` | Text indices checked | Final `j` | Append `s`? |
 |---|---|---|---|
 | 1 | `1` | 0 | No |
-| 2 | TODO | TODO | TODO |
-| 4 | TODO | TODO | TODO |
-| 5 | TODO | TODO | TODO |
+| 2 | `2, 3, 4` | 1 | No |
+| 4 | `4, 5, 6` | 1 | No |
+| 5 | `5, 6, 7` | 3 | Yes |
 
 ### 1.2 Implementation
 
-**TODO 1.2:** Complete `naive_search` in the provided `string_search.py` using
-the pseudocode. Return the list of all matching shifts, including overlaps.
+Complete `naive_search` in the provided `string_search.py` using the pseudocode.
+Return the list of all matching shifts, including overlaps.
 
 ---
 
@@ -169,20 +169,21 @@ characters in the text and pattern.
 Use $d=10$ and $q=13$. Here $m=5$, $p=7$, and $h=3$.
 At shift `6`, the hash is `7`; all five characters match, so record `6`.
 
-**TODO 2.1:** Trace these two steps:
+Trace these two steps:
 
-1. **Move from shift `6` to `7`.** Which digit leaves the window, and which
-   digit enters? Substitute them into the rolling-hash formula and calculate
-   the new hash.
-2. **Check shift `12`.** Its hash is `7`, so compare the characters. List the
-   text and pattern indices checked before stopping. Is this a match or a
-   spurious hit?
+1. **Move from shift `6` to `7`.** The outgoing digit is `3` and the incoming
+digit is `2`, so the rolling hash becomes
+`(7 - 3 * 3) * 10 + 2 = (7 - 9) * 10 + 2 = -18`, and `-18 mod 13 = 8`.
+The new hash is `8`.
+2. **Check shift `12`.** The window is `67399`, whose hash is also `7`. Compare
+indices `12..16` in the text with `0..4` in the pattern: `6` vs `3`, so the
+first comparison mismatches immediately. This is a spurious hit, not a match.
 
 ### 2.2 Implementation
 
-**TODO 2.2:** Complete `rabin_karp` in the provided `string_search.py` using
-the pseudocode. Write the character-by-character check inside the function.
-The length check and initial variables are provided.
+Complete `rabin_karp` in the provided `string_search.py` using the pseudocode.
+Write the character-by-character check inside the function. The length check and
+initial variables are provided.
 
 Use **ASCII strings**, `ord(character)` for codes, and the provided defaults
 `d=256`, `q=101`. The hand trace uses decimal digit codes to keep arithmetic
@@ -191,9 +192,9 @@ manageable. Python's `% q` gives a nonnegative remainder for positive `q`;
 
 ### 2.3 Best- and worst-case time complexity
 
-**TODO 2.3:** Find the best- and worst-case running times, including the time
-spent building the first hashes. Assume $1 \le m \le n$ and that each hash
-operation takes constant time.
+Find the best- and worst-case running times, including the time spent building
+the first hashes. Assume $1 \le m \le n$ and that each hash operation takes
+constant time.
 
 - **Best case:** Every window hash differs from the pattern hash.
 - **Worst case:** The text is $n$ copies of `a`, and the pattern is $m$ copies of `a`.
@@ -203,11 +204,13 @@ hash comparisons and character checks.
 
 | Case | Build hashes | Search | Total |
 |---|---|---|---|
-| Best | TODO | TODO | TODO |
-| Worst | TODO | TODO | TODO |
+| Best | $\Theta(m)$ | $\Theta(n)$ | $\Theta(n + m)$ |
+| Worst | $\Theta(m)$ | $\Theta(nm)$ | $\Theta(nm)$ |
 
-For each case, explain in one sentence how many windows need character checks
-and how many characters are checked in each one.
+In the best case, only the initial hash build and the $n-m+1$ hash checks are
+performed, and no window needs a character-by-character verification. In the
+worst case, every window hash matches and each of the $n-m+1$ windows triggers
+an $O(m)$ character check, so the total is $\Theta(nm)$.
 
 ### Connection: Searching for several patterns
 
@@ -294,33 +297,35 @@ KMP-SEARCH(T, P)
 Use the lecture's `P = "ababaca"` and `T = "abababacaba"`.
 The first five prefix entries are `[0, 0, 1, 2, 3]`.
 
-**TODO 3.1:** Finish the prefix-table steps below. If `k` falls back, show
-its starting value and each value it reaches. Write “none” if no fallback occurs.
-The first row is worked: `P[2] == P[4]`, so `k` increases to `3`.
+Finish the prefix-table steps below. If `k` falls back, show its starting value
+and each value it reaches. Write “none” if no fallback occurs. The first row is
+worked: `P[2] == P[4]`, so `k` increases to `3`.
 
 | Index `j` | Starting `k` | Fallbacks | `pi[j]` |
 |---|---|---|---|
 | 4 | 2 | none | 3 |
-| 5 | 3 | TODO | TODO |
-| 6 | 0 | TODO | TODO |
+| 5 | 3 | `3 -> 1 -> 0` | 0 |
+| 6 | 0 | none | 1 |
 
-Now trace the matcher at `i = 8`, starting with `q = 6`. Which pattern index
-is compared with `T[8]`? What shift is recorded, and what is `q` afterward?
+Now trace the matcher at `i = 8`, starting with `q = 6`. The pattern index
+compared with `T[8]` is `P[6]`, since `q = 6`. The text character is `a` and
+`P[6] = 'a'`, so the match succeeds. This records shift `i - m + 1 = 8 - 7 + 1 = 2`.
+Then `q` is reset to `pi[6] = 1`.
 
 ### 3.2 Implementation
 
 In the provided `string_search.py`:
 
-- **TODO 3.2A:** Complete `compute_prefix_function(pattern)` and return `pi`.
-- **TODO 3.2B:** Complete `kmp_search(text, pattern)` using that helper.
+- Complete `compute_prefix_function(pattern)` and return `pi`.
+- Complete `kmp_search(text, pattern)` using that helper.
 
 Follow the pseudocode's fallback rules both on a mismatch and after a full
 match. The provided checks cover repeated fallbacks and overlapping matches.
 
 ### 3.3 Best- and worst-case time complexity
 
-**TODO 3.3:** Find the best- and worst-case running times, including the time
-to build `pi`. Assume $1 \le m \le n$ and that the search returns all matches.
+Find the best- and worst-case running times, including the time to build `pi`.
+Assume $1 \le m \le n$ and that the search returns all matches.
 
 - **Best case:** The text contains only `a`, and the pattern contains only `b`.
 - **Worst case:** Long partial matches keep ending in mismatches. For example,
@@ -330,12 +335,13 @@ Give tight bounds in terms of $n$ and $m$.
 
 | Case | Build `pi` | Search | Total |
 |---|---|---|---|
-| Best | TODO | TODO | TODO |
-| Worst | TODO | TODO | TODO |
+| Best | $\Theta(m)$ | $\Theta(n)$ | $\Theta(n + m)$ |
+| Worst | $\Theta(m)$ | $\Theta(n)$ | $\Theta(n + m)$ |
 
-Explain the worst-case bound in a few lines. Across the whole scan, how often
-can `q` increase? How does that limit the number of fallbacks? Use the same
-reasoning for `k` when building `pi`.
+The worst case is still linear overall because `q` only increases when a
+character matches, and across the entire text it can increase at most $n$ times.
+Each mismatch can trigger a fallback, but the total number of fallback steps is
+also linear, so the full scan remains $\Theta(n + m)$.
 
 ---
 
@@ -347,7 +353,7 @@ Run the provided practice file from within the `lab7/` directory:
 python3 string_search.py
 ```
 
-- Unfinished implementations report `[TODO]`.
+- Incomplete implementations remain unfinished until the code is fixed.
 - Incorrect results or errors report `[FAIL]`.
 - Successful checks report `[PASS]`.
 
