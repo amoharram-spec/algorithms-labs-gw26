@@ -84,16 +84,15 @@ TOPOLOGICAL-SORT(graph)
 Use the lecture graph above. Its initial in-degrees, in `A` through `E`
 order, are `[0, 1, 1, 2, 1]`. Visit neighbors in the order shown.
 
-**TODO 1.1:** Complete these steps. The queue's front is on the left.
+The queue's front is on the left.
 
 | Vertex removed | Queue afterward | In-degree of `D` |
 |---|---|---|
 | A | `[B, C]` | 2 |
-| B | TODO | TODO |
-| C | TODO | TODO |
+| B | `[C]` | 1 |
+| C | `[D]` | 0 |
 
-Now add the edge `E -> B`. Which vertices reach the output before the
-algorithm stops? What does the function return?
+Now add the edge `E -> B`. The added edge creates the cycle `B -> D -> E -> B`, so only `A` and `C` can be output before the queue empties. After removing `A`, `C` becomes ready; after removing `C`, `D` drops to 1, but no other vertex becomes ready, so the algorithm stops. The function returns `None` because it detects a cycle and the output length is less than `V`.
 
 ### 1.2 Implementation
 
@@ -128,9 +127,7 @@ processed before that vertex, so one pass over the edges is enough.
 
 ### 1.3 Analysis
 
-**TODO 1.3:** Give the time and extra-space bounds for Kahn's algorithm in
-terms of `V` vertices and `E` edges, excluding storage for the input graph.
-Briefly explain how often each vertex enters the queue and each edge is checked.
+Kahn's algorithm runs in `O(V + E)` time and uses `O(V)` extra space, excluding the input graph. We build the in-degree array in `O(V + E)` time by scanning each edge once, and each vertex is enqueued at most once when its in-degree reaches zero. Then each removed vertex scans its adjacency list once, so each directed edge is checked once overall. The queue operations are `O(V)` total across the run, and the extra storage is the array of in-degrees and the queue/order structure.
 
 ---
 
@@ -243,24 +240,19 @@ parent = [A, A, A, C, E]
 rank   = [2, 0, 1, 0, 0]
 ```
 
-**TODO 2.2:** Continue from this state. Record roots after the two `find`
-calls, then decide whether the edge is accepted.
+Continue from this state. Record roots after the two `find` calls, then decide whether the edge is accepted.
 
 | Edge | Roots | Accept? | Total weight |
 |---|---|---|---|
-| `(B, D): 4` | TODO | TODO | TODO |
-| `(A, C): 5` | TODO | TODO | TODO |
-| `(D, E): 6` | TODO | TODO | TODO |
+| `(B, D): 4` | `A, A` | No | `6` |
+| `(A, C): 5` | `A, A` | No | `6` |
+| `(D, E): 6` | `A, E` | Yes | `12` |
 
-After checking `(B, D)`, what is `parent[D]`? Explain why a rejected edge
-can still change the parent array. Does Kruskal examine `(C, E): 7`?
+After checking `(B, D)`, `parent[D]` is `A`. A rejected edge can still change the parent array because `find` performs path compression: the path `D -> C -> A` is shortened to `D -> A` and `C -> A` even though the roots match and the edge is rejected. Kruskal does not examine `(C, E): 7` because it stops as soon as it has accepted `n - 1 = 4` edges; after `(D, E): 6`, the MST is complete.
 
 ### 2.3 Analysis
 
-**TODO 2.3:** For a connected graph, give Kruskal's total time bound,
-including initialization and sorting. You may use the lecture's amortized
-bound of `O(α(V))` per union-find operation, where `α` grows extremely slowly.
-Which step dominates? What changes if the edges are already sorted?
+For a connected graph, Kruskal runs in `O(E log E + E α(V) + V)` time, which is `O(E log E)` overall. The `O(E log E)` term comes from sorting the edges, while the disjoint-set operations are nearly constant amortized time, `O(α(V))` each. The sorting step dominates. If the edges are already sorted, the total falls to `O(V + E α(V))`, since the union-find passes over the edges remain but the expensive sort no longer occurs.
 
 ---
 
